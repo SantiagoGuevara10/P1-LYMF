@@ -21,11 +21,19 @@ public class SandboxConjuntos {
     }
 
     public String getPrimera() {
-        return arbolCadenas.first();
+        if (arbolCadenas.isEmpty()) {
+        	return null;
+        } else {
+        	return arbolCadenas.first();
+        }
     }
 
     public String getUltima() {
-        return arbolCadenas.last();
+        if (arbolCadenas.isEmpty()) {
+            return null; 
+        } else {
+            return arbolCadenas.last();
+        }
     }
 
     public Collection<String> getSiguientes(String cadena) {

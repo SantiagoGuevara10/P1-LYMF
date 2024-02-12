@@ -165,19 +165,20 @@ public class SandboxArreglos
         return contador;
     }
 
-    public int[] buscarEntero( int valor )
-    {
+    public int[] buscarEntero(int valor) {
         int contador = 0;
         for (int entero : arregloEnteros) {
             if (entero == valor) {
                 contador++;
             }
         }
+
         int[] posiciones = new int[contador];
         contador = 0;
         for (int i = 0; i < arregloEnteros.length; i++) {
             if (arregloEnteros[i] == valor) {
-                posiciones[contador++] = i;
+                posiciones[contador] = i;
+                contador++;
             }
         }
         return posiciones;
@@ -222,9 +223,8 @@ public class SandboxArreglos
         return contador;
     }
 
-    public boolean compararArregloEnteros( int[] otroArreglo )
-    {
-        return Arrays.equals(arregloEnteros, otroArreglo);
+    public boolean compararArregloEnteros(int[] otroArreglo) {
+        return Arrays.equals(this.arregloEnteros, otroArreglo);
     }
 
     public boolean mismosEnteros( int[] otroArreglo )

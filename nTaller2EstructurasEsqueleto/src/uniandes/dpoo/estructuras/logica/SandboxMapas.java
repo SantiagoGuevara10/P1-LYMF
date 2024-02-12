@@ -67,11 +67,12 @@ public class SandboxMapas
         mapaCadenas.remove(llave);
     }
 
-    public void reiniciarMapaCadenas(List<Object> objetos)
-    {
+    public void reiniciarMapaCadenas(List<Object> objetos) {
         mapaCadenas.clear();
         for (Object obj : objetos) {
-            mapaCadenas.put(invertirCadena(obj.toString()), obj.toString());
+            String cadena = obj.toString();
+            String clave = invertirCadena(cadena);
+            mapaCadenas.put(clave, cadena);
         }
     }
 
