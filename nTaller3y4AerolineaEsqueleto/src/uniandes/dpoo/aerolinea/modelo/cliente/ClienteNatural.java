@@ -1,19 +1,21 @@
 package uniandes.dpoo.aerolinea.modelo.cliente;
 
+import uniandes.dpoo.aerolinea.modelo.Cliente;
+
 /**
- * Clase que representa a un cliente natural de la aerolínea.
+ 
  */
 public class ClienteNatural extends Cliente {
     private String fechaNacimiento;
     private String nacionalidad;
 
     public ClienteNatural(String nombre, String identificacion, String fechaNacimiento, String nacionalidad) {
-        super(nombre, identificacion); // Llamada al constructor de la superclase
+        super(nombre, identificacion); 
         this.fechaNacimiento = fechaNacimiento;
         this.nacionalidad = nacionalidad;
     }
 
-    // Métodos getter y setter para los nuevos atributos
+    
     public String getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -30,7 +32,7 @@ public class ClienteNatural extends Cliente {
         this.nacionalidad = nacionalidad;
     }
 
-    // Implementación de métodos abstractos de la clase Cliente (si los hay)
+    
 
-    // Otros métodos específicos de ClienteNatural
+    
 }

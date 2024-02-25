@@ -1,40 +1,49 @@
 package uniandes.dpoo.aerolinea.modelo.cliente;
 
+import uniandes.dpoo.aerolinea.modelo.Cliente;
 import org.json.JSONObject;
 
-/**
- * Esta clase se usa para representar a los clientes de la aerolínea que son empresas
- */
-public class ClienteCorporativo extends Cliente
-{
-    // TODO completar
-    
+public class ClienteCorporativo extends Cliente {
+    private String nombreEmpresa;
+    private int tamanoEmpresa;
 
-
-    /**
-     * Crea un nuevo objeto de tipo a partir de un objeto JSON.
-     * 
-     * El objeto JSON debe tener dos atributos: nombreEmpresa (una cadena) y tamanoEmpresa (un número).
-     * @param cliente El objeto JSON que contiene la información
-     * @return El nuevo objeto inicializado con la información
-     */
-    public static ClienteCorporativo cargarDesdeJSON( JSONObject cliente )
-    {
-        String nombreEmpresa = cliente.getString( "nombreEmpresa" );
-        int tam = cliente.getInt( "tamanoEmpresa" );
-        return new ClienteCorporativo( nombreEmpresa, tam );
+    public ClienteCorporativo(String nombre, String identificacion, String nombreEmpresa, int tamanoEmpresa) {
+        super(nombre, identificacion);
+        this.nombreEmpresa = nombreEmpresa;
+        this.tamanoEmpresa = tamanoEmpresa;
     }
 
-    /**
-     * Salva este objeto de tipo ClienteCorporativo dentro de un objeto JSONObject para que ese objeto se almacene en un archivo
-     * @return El objeto JSON con toda la información del cliente corporativo
-     */
-    public JSONObject salvarEnJSON( )
-    {
-        JSONObject jobject = new JSONObject( );
-        jobject.put( "nombreEmpresa", this.nombreEmpresa );
-        jobject.put( "tamanoEmpresa", this.tamanoEmpresa );
-        jobject.put( "tipo", CORPORATIVO );
+    // Métodos getter y setter para nombreEmpresa y tamanoEmpresa
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
+    }
+
+    public int getTamanoEmpresa() {
+        return tamanoEmpresa;
+    }
+
+    public void setTamanoEmpresa(int tamanoEmpresa) {
+        this.tamanoEmpresa = tamanoEmpresa;
+    }
+
+    public static ClienteCorporativo cargarDesdeJSON(JSONObject cliente) {
+        String nombre = cliente.getString("nombre");
+        String identificacion = cliente.getString("identificacion");
+        String nombreEmpresa = cliente.getString("nombreEmpresa");
+        int tamanoEmpresa = cliente.getInt("tamanoEmpresa");
+        return new ClienteCorporativo(nombre, identificacion, nombreEmpresa, tamanoEmpresa);
+    }
+
+    public JSONObject salvarEnJSON() {
+        JSONObject jobject = new JSONObject();
+        jobject.put("nombre", getNombre());
+        jobject.put("identificacion", getIdentificacion());
+        jobject.put("nombreEmpresa", this.nombreEmpresa);
+        jobject.put("tamanoEmpresa", this.tamanoEmpresa);
         return jobject;
     }
 }

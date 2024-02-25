@@ -14,7 +14,7 @@ import uniandes.dpoo.aerolinea.exceptions.InformacionInconsistenteTiqueteExcepti
 import uniandes.dpoo.aerolinea.modelo.Aerolinea;
 import uniandes.dpoo.aerolinea.modelo.Ruta;
 import uniandes.dpoo.aerolinea.modelo.Vuelo;
-import uniandes.dpoo.aerolinea.modelo.cliente.Cliente;
+import uniandes.dpoo.aerolinea.modelo.Cliente;
 import uniandes.dpoo.aerolinea.modelo.cliente.ClienteCorporativo;
 import uniandes.dpoo.aerolinea.modelo.cliente.ClienteNatural;
 import uniandes.dpoo.aerolinea.tiquetes.GeneradorTiquetes;
@@ -96,7 +96,7 @@ public class PersistenciaTiquetesJson implements IPersistenciaTiquetes
                 // Al revisar el código de la clase ClienteNatural, no hay nada que tenga que ver con cargar o salvar.
                 // En este caso, la persistencia es una preocupación transversal de la que no se ocupa la clase ClienteNatural
                 String nombre = cliente.getString( NOMBRE_CLIENTE );
-                nuevoCliente = new ClienteNatural( nombre );
+                nuevoCliente = new ClienteNatural( nombre, nombre, nombre, nombre );
             }
             else
             {
@@ -105,10 +105,10 @@ public class PersistenciaTiquetesJson implements IPersistenciaTiquetes
                 // En este caso, la persistencia es una preocupación de la cual se ocupa la clase ClienteCorporativo
                 nuevoCliente = ClienteCorporativo.cargarDesdeJSON( cliente );
             }
-            if( !aerolinea.existeCliente( nuevoCliente.getIdentificador( ) ) )
+            if( !aerolinea.existeCliente( nuevoCliente.getIdentificacion( ) ) )
                 aerolinea.agregarCliente( nuevoCliente );
             else
-                throw new ClienteRepetidoException( nuevoCliente.getTipoCliente( ), nuevoCliente.getIdentificador( ) );
+                throw new ClienteRepetidoException( nuevoCliente.getTipoCliente( ), nuevoCliente.getIdentificacion( ) );
         }
     }
 
@@ -130,7 +130,7 @@ public class PersistenciaTiquetesJson implements IPersistenciaTiquetes
             if( ClienteNatural.NATURAL.equals( cliente.getTipoCliente( ) ) )
             {
                 JSONObject jCliente = new JSONObject( );
-                jCliente.put( NOMBRE_CLIENTE, cliente.getIdentificador( ) );
+                jCliente.put( NOMBRE_CLIENTE, cliente.getIdentificacion( ) );
                 jClientes.put( jCliente );
             }
             else
@@ -209,7 +209,7 @@ public class PersistenciaTiquetesJson implements IPersistenciaTiquetes
             jTiquete.put( FECHA, tiquete.getVuelo( ).getFecha( ) );
             jTiquete.put( TARIFA, tiquete.getTarifa( ) );
             jTiquete.put( USADO, tiquete.esUsado( ) );
-            jTiquete.put( CLIENTE, tiquete.getCliente( ).getIdentificador( ) );
+            jTiquete.put( CLIENTE, tiquete.getCliente( ).getIdentificacion( ) );
 
             jTiquetes.put( jTiquete );
         }

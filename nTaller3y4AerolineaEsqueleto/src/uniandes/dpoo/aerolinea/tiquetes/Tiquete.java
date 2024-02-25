@@ -1,52 +1,45 @@
 package uniandes.dpoo.aerolinea.tiquetes;
 
+import uniandes.dpoo.aerolinea.modelo.Vuelo;
+import uniandes.dpoo.aerolinea.modelo.Cliente;
+
 public class Tiquete {
     private String codigo;
-    private String nombrePasajero;
-    private String numeroVuelo;
-    private double precio;
-    // Otros atributos relevantes para un tiquete
+    private Vuelo vuelo;
+    private Cliente cliente;
+    private int tarifa;
+    private boolean usado;
 
-    public Tiquete(String codigo, String nombrePasajero, String numeroVuelo, double precio) {
+    public Tiquete(String codigo, Vuelo vuelo, Cliente cliente, int tarifa) {
         this.codigo = codigo;
-        this.nombrePasajero = nombrePasajero;
-        this.numeroVuelo = numeroVuelo;
-        this.precio = precio;
+        this.vuelo = vuelo;
+        this.cliente = cliente;
+        this.tarifa = tarifa;
+        this.usado = false;
     }
 
-    // Getters y setters
-
+    // Getters y Setters
     public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public String getNombrePasajero() {
-        return nombrePasajero;
+    public Vuelo getVuelo() {
+        return vuelo;
     }
 
-    public void setNombrePasajero(String nombrePasajero) {
-        this.nombrePasajero = nombrePasajero;
+    public int getTarifa() {
+        return tarifa;
     }
 
-    public String getNumeroVuelo() {
-        return numeroVuelo;
+    public void marcarComoUsado() {
+        this.usado = true;
     }
 
-    public void setNumeroVuelo(String numeroVuelo) {
-        this.numeroVuelo = numeroVuelo;
+    public boolean esUsado() {
+        return usado;
     }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    
 }

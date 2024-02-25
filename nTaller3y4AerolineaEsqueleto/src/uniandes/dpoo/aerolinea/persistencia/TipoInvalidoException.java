@@ -1,7 +1,7 @@
 package uniandes.dpoo.aerolinea.persistencia;
 
 /**
- * Esta excepción sirve para indicar que se intentó cargar o salvar información en un formato de archivo desconocido
+
  */
 @SuppressWarnings("serial")
 public class TipoInvalidoException extends Exception
