@@ -1,0 +1,268 @@
+P/*
+Gramatica para el Robot:
+Autor: Alejandro Arango
+Modificado por: Silvia Takahashi
+Modificado por: Juan Pablo Morales.
+Agregadas producciones para manejar globos
+Modificado por Silvia Takahashi
+
+
+ **/
+
+
+options 
+{
+  
+	LOOKAHEAD=1; 
+	IGNORE_CASE=true;
+	STATIC = false;
+	
+}
+   
+
+PARSER_BEGIN(Robot)
+
+package uniandes.lym.robot.control;
+
+import uniandes.lym.robot.kernel.*;
+import uniandes.lym.robot.view.Console;
+
+
+import java.awt.Point;
+import java.io.*;
+import java.util.Vector;
+import java.util.LinkedList;
+
+@SuppressWarnings("serial")
+public class Robot 
+{
+
+
+	private RobotWorldDec world;
+	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	
+	void setWorld(RobotWorld w) {
+		world = (RobotWorldDec) w;	
+	}
+
+	String salida=new String();
+}
+PARSER_END(Robot)
+
+SKIP:
+{
+	" "
+	|	"\r"
+	|	"\t"
+	| "\n"
+}
+
+TOKEN: 
+{
+    < MOV: "Mov" >
+  | < RIGHT: "RIGHT" >
+  | < PUT: "Put" >
+  | < PICK: "Pick" >
+  | < POP: "Pop" >
+  | < GO: "GO" >
+  | < HOP: "HOP" >
+  | < DEFVAR: "defvar" >
+  | < IF: "if" >
+  | < THEN: "then" >
+  | < ELSE: "else" >
+  | < LOOP: "loop" >
+  | < REPEAT: "repeat" >
+  | < TURN: "turn" >
+  | < FACE: "face" >
+  | < CMD_SKIP: "skip" > 
+  | < MOVEDIR: "move-dir" >
+  | < RUNDIRS: "run-dirs" >
+  | < MOVEFACE: "move-face" >
+  | < NULL: "null" >
+  | < ASSIGN: "=" >
+  | < SEMICOLON: ";" >
+}
+
+TOKEN: 
+{
+    < BALLOONS:  "BALLOONS" >
+  | < CHIPS:     "CHIPS"  >
+  | < DIRECTION: ":left" | ":right" | "around">
+  | < ORIENTATION: ":north" | ":south" | ":east" | ":west" >
+}
+
+TOKEN:
+{
+    < DIM: "dim" >
+  | < MYXPOS: "myXpos" >
+  | < MYYPOS: "myYpos" >
+  | < MYCHIPS: "myChips" >
+  | < MYBALLOONS: "myBalloons" >
+  | < BALLOONSHERE: "balloonsHere" >
+  | < CHIPSHERE: "chipsHere" >
+  | < SPACES: "spaces" >
+  | < NUM: (<DIGIT>)+ >
+  | < #DIGIT: ["0"-"9"] >
+  | < IDENTIFIER: ["a"-"z", "A"-"Z"] (<DIGIT> | ["a"-"z", "A"-"Z"])* >
+}
+
+
+
+	
+	boolean command(Console sistema):
+{   
+    int x, y;
+    String salida = new String(); 
+}
+{
+    (
+      (
+        
+       <RIGHT> "(" ")" {
+           world.turnRight(); 
+           salida = "Command: Turn right executed.";
+       }
+    |   <MOV>  "(" x=num() ")" {
+           world.moveForward(x, false); 
+           salida = "Command: Move forward " + x + " steps executed.";
+       }
+    |   <HOP>  "(" x=num() ")" {
+           world.moveForward(x, true); 
+           salida = "Command: Jump forward " + x + " steps executed.";
+       }
+    |   <GO>  "(" x=num() "," y=num()")" {
+           world.setPostion(x,y);
+           salida = "Command: Attempt to GO to (" + x + ", " + y + ") received.";
+       }
+   
+    |   <POP> "(" x=num() ")" {
+           world.popBalloons(x); 
+           salida = "Command: Pop " + x + " balloons executed.";
+       }
+    |  "("< SKIP >  x=num() ")" {
+           world.moveForward(x, true); 
+           salida = "Command: Jump forward " + x + " steps executed.";
+       }
+    |  "(" < TURN > <DIRECTION > ")" {
+      
+            if <DIRECTION > == "right";
+            world.
+            
+       }
+       
+       
+    ) ";" {
+        return true;
+    })+
+    | <EOF> {return false;} 
+}
+
+	void put() :
+{
+    int f = 1; 
+}
+{
+    ( <CHIPS>    "," f=num() {
+        world.putChips(f); 
+        salida = "Command: Put " + f + " chips executed.";
+    }
+    |   <BALLOONS>   "," f=num() {
+        world.putBalloons(f); 
+        salida = "Command: Put " + f + " balloons executed.";
+    }) 
+}
+
+	void get() :
+{
+    int f = 1; 
+}
+{
+    ( <CHIPS>   "," f=num() {
+        world.pickChips(f); 
+        salida = "Command: Picked " + f + " chips executed.";
+    }
+    |   <BALLOONS>   "," f=num() {
+        world.grabBalloons(f); 
+        salida = "Command: Picked " + f + " balloons executed.";
+    }) 
+}
+    
+void defVar() throws Error:
+{
+    String varName;
+    int value;
+}
+{
+    <DEFVAR> varName=identifier() <ASSIGN> value=varOrNum() <SEMICOLON> {
+        variables.put(varName, value);
+        salida = "Variable " + varName + " defined with value: " + value;
+    }
+}
+String identifier():
+{
+    Token t;
+}
+{
+    t=<IDENTIFIER> { return t.image; }
+}
+int varOrNum() throws Error:
+{
+    int total = 0;
+    String variable;
+}
+{
+    (<IDENTIFIER> {
+        variable = token.image;
+        if(variables.containsKey(variable)) {
+            total = variables.get(variable);
+        } else {
+            throw new Error("La variable no existe");
+        }
+        return total;
+    }
+    | <NUM> {
+        try {
+            total = Integer.parseInt(token.image);
+        } catch(NumberFormatException ee) {
+            throw new Error("Number out of bounds: " + token.image + "!!");
+        }
+        return total;
+    })
+}
+     
+              
+
+  
+     
+
+
+	
+
+	/**
+	 * Unsigned decimal number
+	 * @return the corresponding value of the string
+	 * @error  corresponding value is too large
+	 */
+
+	int num() throws Error:
+	{	
+		int total=1;
+	}
+	{
+		<NUM>
+		{
+			try 
+			{
+				total = Integer.parseInt(token.image);
+			} 
+			catch (NumberFormatException ee) 
+			{
+				throw new Error("Number out of bounds: "+token.image+" !!");
+			}
+			return total;
+		}
+	}
+	
+	  
+
+	
