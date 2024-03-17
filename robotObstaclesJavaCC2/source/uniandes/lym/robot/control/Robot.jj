@@ -43,6 +43,33 @@ public class Robot
 
 	private RobotWorldDec world;
 	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	boolean canMove(String direction) {
+    Point currentPos = world.getPosition();
+    Point newPos;
+    switch (direction) {
+        case "north":
+            newPos = new Point(currentPos.x, currentPos.y - 1);
+            break;
+        case "south":
+            newPos = new Point(currentPos.x, currentPos.y + 1);
+            break;
+        case "east":
+            newPos = new Point(currentPos.x + 1, currentPos.y);
+            break;
+        case "west":
+            newPos = new Point(currentPos.x - 1, currentPos.y);
+            break;
+        default:
+            throw new RuntimeException("Invalid direction");
+    }
+
+    
+    if (newPos.x < 1 || newPos.x > world.getN() || newPos.y < 1 || newPos.y > world.getN()) {
+        return false; 
+    }
+
+    return !world.isBlocked(newPos); 
+}
 	public void faceDirection(String direction) {
     switch (direction) {
         case ":north":
@@ -104,7 +131,10 @@ TOKEN:
   | < NAME : "Mov"| "Right" | "Put" | "Pick" | "Pop" |"GO" | "HOP" >
   | < FACING: "facing" >
   | < BLOCKED: "blocked" >
-  | < CANPUT: "CAN-PUT?" >
+  | < CANPUT: "can-put?" >
+  | < CANMOVE: "can-move?" >
+  | < ISZERO: "isZero?" >
+  | < NOT: "not" >
   
 }
 
@@ -202,6 +232,13 @@ TOKEN:
 	| pick(){
 	
 	}
+    | canMove(){
+	
+	}
+	| isZero(){
+	
+	}
+	
 
        
     ) ";" {
@@ -514,7 +551,41 @@ void nullCommand() :
    "(" <NULL> ")"
 }
 
-
+int value() :
+{
+    Token t;
+    int val = 0;
+}
+{
+    t = <NUM> { return Integer.parseInt(t.image); }
+  |
+    t = <IDENTIFIER> {
+     
+        Integer value = variables.get(t.image);
+        if (value != null) {
+            return value;
+        } else {
+            
+            throw new ParseException("Variable \"" + t.image + "\" no definida.");
+        }
+    }
+  |
+    t = <DIM> { return world.getN(); }
+  |
+    t = <MYXPOS> { return world.getPosition().x; }
+  |
+    t = <MYYPOS> { return world.getPosition().y; }
+  |
+    t = <MYCHIPS> { return world.getMyChips(); }
+  |
+    t = <MYBALLOONS> { return world.getMyBalloons(); }
+  |
+    t = <BALLOONSHERE> { return world.countBalloons(); }
+  |
+    t = <CHIPSHERE> { return world.chipsToPick(); }
+  |
+    t = <SPACES> { return world.freeSpacesForChips(); }
+}
 
 boolean facingCondition() : 
 {
@@ -539,13 +610,43 @@ boolean facingCondition() :
     }
 }
       
-      
-    
+boolean canMove() : 
+{
+    Token direction;
+}
+{
+    "(" <CANMOVE> direction=<ORIENTATION> ")" 
+    {
+        switch(direction.image) 
+        {
+            case ":north":
+                return canMove("north");
+            case ":south":
+                return canMove("south");
+            case ":east":
+                return canMove("east");
+            case ":west":
+                return canMove("west");
+            default:
+                throw new ParseException("Unknown direction: " + direction.image);
+        }
+    }
+}
 
+
+boolean isZero() : 
+{
+    int value;
+}
+{
+    "(" <ISZERO> value=value() ")" 
+    {
+        return value == 0;
+    }
+}
      
    
    
-
 
 
 	/**

@@ -63,37 +63,43 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int CANPUT = 30;
   /** RegularExpression Id. */
-  int BALLOONS = 31;
+  int CANMOVE = 31;
   /** RegularExpression Id. */
-  int CHIPS = 32;
+  int ISZERO = 32;
   /** RegularExpression Id. */
-  int OBJECTYPE = 33;
+  int NOT = 33;
   /** RegularExpression Id. */
-  int DIRECTION = 34;
+  int BALLOONS = 34;
   /** RegularExpression Id. */
-  int ORIENTATION = 35;
+  int CHIPS = 35;
   /** RegularExpression Id. */
-  int DIM = 36;
+  int OBJECTYPE = 36;
   /** RegularExpression Id. */
-  int MYXPOS = 37;
+  int DIRECTION = 37;
   /** RegularExpression Id. */
-  int MYYPOS = 38;
+  int ORIENTATION = 38;
   /** RegularExpression Id. */
-  int MYCHIPS = 39;
+  int DIM = 39;
   /** RegularExpression Id. */
-  int MYBALLOONS = 40;
+  int MYXPOS = 40;
   /** RegularExpression Id. */
-  int BALLOONSHERE = 41;
+  int MYYPOS = 41;
   /** RegularExpression Id. */
-  int CHIPSHERE = 42;
+  int MYCHIPS = 42;
   /** RegularExpression Id. */
-  int SPACES = 43;
+  int MYBALLOONS = 43;
   /** RegularExpression Id. */
-  int NUM = 44;
+  int BALLOONSHERE = 44;
   /** RegularExpression Id. */
-  int DIGIT = 45;
+  int CHIPSHERE = 45;
   /** RegularExpression Id. */
-  int IDENTIFIER = 46;
+  int SPACES = 46;
+  /** RegularExpression Id. */
+  int NUM = 47;
+  /** RegularExpression Id. */
+  int DIGIT = 48;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 49;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -130,7 +136,10 @@ public interface RobotConstants {
     "<NAME>",
     "\"facing\"",
     "\"blocked\"",
-    "\"CAN-PUT?\"",
+    "\"can-put?\"",
+    "\"can-move?\"",
+    "\"isZero?\"",
+    "\"not\"",
     "\":balloons\"",
     "\":chips\"",
     "<OBJECTYPE>",
