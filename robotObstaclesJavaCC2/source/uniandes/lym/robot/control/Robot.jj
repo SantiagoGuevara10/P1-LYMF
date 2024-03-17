@@ -1,4 +1,4 @@
-P/*
+/*
 Gramatica para el Robot:
 Autor: Alejandro Arango
 Modificado por: Silvia Takahashi
@@ -13,7 +13,7 @@ Modificado por Silvia Takahashi
 options 
 {
   
-	LOOKAHEAD=1; 
+	LOOKAHEAD=2; 
 	IGNORE_CASE=true;
 	STATIC = false;
 	
@@ -32,6 +32,9 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Robot 
@@ -40,6 +43,23 @@ public class Robot
 
 	private RobotWorldDec world;
 	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	public void faceDirection(String direction) {
+    switch (direction) {
+        case ":north":
+            while(!world.facingNorth()) world.turnRight();
+            break;
+        case ":south":
+            while(!world.facingSouth()) world.turnRight();
+            break;
+        case ":east":
+            while(!world.facingEast()) world.turnRight();
+            break;
+        case ":west":
+            while(!world.facingWest()) world.turnRight();
+            break;
+    }
+}
+
 	
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
@@ -81,14 +101,23 @@ TOKEN:
   | < NULL: "null" >
   | < ASSIGN: "=" >
   | < SEMICOLON: ";" >
+  | < NAME : "Mov"| "Right" | "Put" | "Pick" | "Pop" |"GO" | "HOP" >
+  | < FACING: "facing" >
+  | < BLOCKED: "blocked" >
+  | < CANPUT: "CAN-PUT?" >
+  
 }
 
 TOKEN: 
 {
-    < BALLOONS:  "BALLOONS" >
-  | < CHIPS:     "CHIPS"  >
-  | < DIRECTION: ":left" | ":right" | "around">
+    < BALLOONS:":balloons" >
+  | < CHIPS:":chips"  >
+  | < OBJECTYPE:"chips" | "balloons" >
+  
+  | < DIRECTION: ":left" | ":right" | ":around" | ":back" |":front" |":up" |":down">
   | < ORIENTATION: ":north" | ":south" | ":east" | ":west" >
+  
+  
 }
 
 TOKEN:
@@ -139,17 +168,41 @@ TOKEN:
            world.popBalloons(x); 
            salida = "Command: Pop " + x + " balloons executed.";
        }
-    |  "("< SKIP >  x=num() ")" {
+    |  "("< CMD_SKIP >  x=num() ")" {
            world.moveForward(x, true); 
            salida = "Command: Jump forward " + x + " steps executed.";
        }
-    |  "(" < TURN > <DIRECTION > ")" {
-      
-            if <DIRECTION > == "right";
-            world.
-            
+    |   defVar() {
+           
        }
-       
+    |   asignVar() {
+           
+       }
+    |   turn() {
+           
+       }
+    |   face() {
+           
+       }
+	| put(){
+	
+	   }
+	| moveDir(){
+	
+	   }
+	| runDirs(){
+	
+	   }
+	| moveFace(){
+	
+	   }
+	| facingCondition(){
+	
+	   }
+	| pick(){
+	
+	}
+
        
     ) ";" {
         return true;
@@ -157,46 +210,78 @@ TOKEN:
     | <EOF> {return false;} 
 }
 
-	void put() :
+
+
+void put() :
 {
-    int f = 1; 
+    int f = 0; 
+    Token x;
 }
 {
-    ( <CHIPS>    "," f=num() {
-        world.putChips(f); 
-        salida = "Command: Put " + f + " chips executed.";
+    "(" <PUT> (x=<CHIPS> | x=<BALLOONS>) f=num() ")"
+    {
+        if (x.kind == CHIPS) {
+            world.putChips(f); 
+            salida = "Command: Put " + f + " chips executed.";
+        } else if (x.kind == BALLOONS) {
+            world.putBalloons(f); 
+            salida = "Command: Put " + f + " balloons executed.";
+        }
     }
-    |   <BALLOONS>   "," f=num() {
-        world.putBalloons(f); 
-        salida = "Command: Put " + f + " balloons executed.";
-    }) 
+}
+void pick() :
+{
+    int f = 0; 
+    Token x;
+}
+{
+    "(" <PICK> (x=<CHIPS> | x=<BALLOONS>) f=num() ")"
+    {
+        if (x.kind == CHIPS) {
+            world.pickChips(f); 
+        salida = "Command: Picked " + f + " chips executed.";
+        } else if (x.kind == BALLOONS) {
+            world.grabBalloons(f); 
+        salida = "Command: Picked " + f + " balloons executed.";
+        }
+    }
 }
 
-	void get() :
-{
-    int f = 1; 
-}
-{
-    ( <CHIPS>   "," f=num() {
-        world.pickChips(f); 
-        salida = "Command: Picked " + f + " chips executed.";
-    }
-    |   <BALLOONS>   "," f=num() {
-        world.grabBalloons(f); 
-        salida = "Command: Picked " + f + " balloons executed.";
-    }) 
-}
     
 void defVar() throws Error:
 {
-    String varName;
+    Token varName;
     int value;
 }
 {
-    <DEFVAR> varName=identifier() <ASSIGN> value=varOrNum() <SEMICOLON> {
-        variables.put(varName, value);
-        salida = "Variable " + varName + " defined with value: " + value;
+    "(" <DEFVAR> varName=tokenEspecial() value=varOrNum() ")" {
+        String varNameStr = varName.image;
+        if (variables.containsKey(varNameStr)) {
+            throw new Error("Variable " + varNameStr + " is already defined.");
+        }
+        variables.put(varNameStr, value);
+        salida = "Variable " + varNameStr + " defined with value: " + value;
     }
+}
+
+Token tokenEspecial() : 
+{
+    Token token;
+}
+{
+    (
+        token = <IDENTIFIER>
+      | token = <RIGHT>
+      | token = <PUT>
+      | token = <PICK>
+      | token = <POP>
+      | token = <HOP>
+      | token = <GO>
+      | token = <CMD_SKIP>
+      | token = <MOV> 
+      
+    )
+    { return token; }
 }
 String identifier():
 {
@@ -205,6 +290,7 @@ String identifier():
 {
     t=<IDENTIFIER> { return t.image; }
 }
+
 int varOrNum() throws Error:
 {
     int total = 0;
@@ -213,35 +299,259 @@ int varOrNum() throws Error:
 {
     (<IDENTIFIER> {
         variable = token.image;
-        if(variables.containsKey(variable)) {
+        if (variables.containsKey(variable)) {
             total = variables.get(variable);
         } else {
-            throw new Error("La variable no existe");
+            throw new Error("La variable '" + variable + "' no existe.");
         }
         return total;
     }
     | <NUM> {
         try {
             total = Integer.parseInt(token.image);
-        } catch(NumberFormatException ee) {
+        } catch (NumberFormatException ee) {
             throw new Error("Number out of bounds: " + token.image + "!!");
         }
         return total;
     })
 }
+void asignVar():
+{
+    Token varName;
+    int value;
+}
+{
+  "(" < ASSIGN > varName=tokenEspecial() value=varOrNum() ")"  {
+    String varNameStr = varName.image;
+        if (variables.containsKey(varNameStr)) {
+            throw new Error("Variable " + varNameStr + " is already defined.");
+        }
+        variables.put(varNameStr, value);
+        salida = "Variable " + varNameStr + " defined with value: " + value;
+    }
+}
+
+void turn():
+{
+	Token dir;
+}
+{
+    "(" <TURN> dir=<DIRECTION> ")"
+    { if (dir.image.equals(":left")) {
+    world.turnRight();
+    world.turnRight();
+    world.turnRight();
+} else if (dir.image.equals(":right")) {
+    world.turnRight();
+} else if (dir.image.equals(":around")) {
+    world.turnRight();
+    world.turnRight();
+  }
+}
+}
+void face(): 
+{
+    Token direction;
+}
+{
+    "(" <FACE> direction=<ORIENTATION>")"
+    {
+        switch (direction.image) {
+            case ":north":
+                faceDirection(RobotWorld.NORTH);
+                break;
+            case ":south":
+                faceDirection(RobotWorld.SOUTH);
+                break;
+            case ":east":
+                faceDirection(RobotWorld.EAST);
+                break;
+            case ":west":
+                faceDirection(RobotWorld.WEST);
+                break;
+        }
+    }
+}   
+
+
+void faceDirection(int targetDirection): 
+{
+}
+{
+    {
+        
+        while(true) {
+            if ((targetDirection == RobotWorld.NORTH && world.facingNorth()) ||
+                (targetDirection == RobotWorld.SOUTH && world.facingSouth()) ||
+                (targetDirection == RobotWorld.EAST && world.facingEast()) ||
+                (targetDirection == RobotWorld.WEST && world.facingWest())) {
+                break;
+            } else {
+                world.turnRight();
+            }
+        }
+    }
+}
+
+void moveDir():
+{
+    int n = 0;
+    Token dir;
+    int originalFacing;
+}
+{
+    "(" <MOVEDIR> n=num() dir=<DIRECTION> ")"{
+        originalFacing = world.getFacing(); 
+        switch (dir.image) {
+            case ":front":
+       
+                break;
+            case ":right":
+            
+                world.turnRight();
+                world.moveForward(n, false);
+                restoreOriginalFacing(originalFacing);
+                break;
+            case ":left":
+           
+                world.turnRight();
+                world.turnRight();
+                world.turnRight();
+                world.moveForward(n, false);
+                restoreOriginalFacing(originalFacing);
+                break;
+            case ":back":
+               
+                world.turnRight();
+                world.turnRight();
+                world.moveForward(n, false);
+                restoreOriginalFacing(originalFacing);
+                break;
+        }
+    }
+}
+
+
+void restoreOriginalFacing(int originalFacing): 
+{
+}
+{
+    {
+      
+        while (world.getFacing() != originalFacing) {
+            world.turnRight();
+        }
+        
+    }
+}
+void moveFace() : 
+{
+    int steps;
+    Token direction;
+    Token stepsToken; 
+}
+{
+    "(" <MOVEFACE> stepsToken=<NUM> direction=<ORIENTATION> ")"
+    {
+       
+        steps = Integer.parseInt(stepsToken.image);
+        
+       
+        faceDirection(direction.image);
+
+       
+        for(int i = 0; i < steps; i++) {
+            world.moveForward(1, false); 
+        }
+    }
+}
+void runDirs() :
+{
+    List<Token> directions = new ArrayList<>();
+    Token dir;
+    int originalFacing;
+}
+{
+   "(" <RUNDIRS> (dir=<DIRECTION> { directions.add(dir); } ( dir=<DIRECTION> { directions.add(dir); } )*) ")"
+    {
+        originalFacing = world.getFacing(); 
+        
+        
+        for (Token direction : directions) {
+            switch (direction.image) {
+                case ":front":
+                    world.moveForward(1, false); 
+                    break;
+                case ":right":
+                    world.turnRight();
+                    world.moveForward(1, false); 
+                    world.turnRight(); world.turnRight(); world.turnRight(); 
+                    break;
+                case ":left":
+                    world.turnRight(); world.turnRight(); world.turnRight(); 
+                    world.moveForward(1, false); 
+                    world.turnRight(); 
+                    break;
+                case ":back":
+                    world.turnRight(); world.turnRight(); 
+                    world.moveForward(1, false); 
+                    world.turnRight(); world.turnRight(); 
+                    break;
+            }
+        }
+        
+        
+        while (world.getFacing() != originalFacing) {
+            world.turnRight();
+        }
+    }
+}
+
+void nullCommand() : 
+{
+}
+{
+   "(" <NULL> ")"
+}
+
+
+
+boolean facingCondition() : 
+{
+    Token direction;
+}
+{
+    "(" <FACING> "?" direction=<ORIENTATION> ")" 
+    {
+        switch(direction.image) 
+        {
+            case ":north":
+                return world.facingNorth();
+            case ":south":
+                return world.facingSouth();
+            case ":east":
+                return world.facingEast();
+            case ":west":
+                return world.facingWest();
+            default:
+                throw new ParseException("Unknown direction: " + direction.image);
+        }
+    }
+}
+      
+      
+    
+
      
-              
-
-  
-     
+   
+   
 
 
-	
 
 	/**
 	 * Unsigned decimal number
 	 * @return the corresponding value of the string
-	 * @error  corresponding value is too large
+	 * @error  corresponding value is too larges
 	 */
 
 	int num() throws Error:
@@ -262,6 +572,35 @@ int varOrNum() throws Error:
 			return total;
 		}
 	}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	  
 

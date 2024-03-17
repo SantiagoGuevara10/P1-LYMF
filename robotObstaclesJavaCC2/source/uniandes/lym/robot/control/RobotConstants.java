@@ -25,13 +25,75 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int HOP = 11;
   /** RegularExpression Id. */
-  int BALLOONS = 12;
+  int DEFVAR = 12;
   /** RegularExpression Id. */
-  int CHIPS = 13;
+  int IF = 13;
   /** RegularExpression Id. */
-  int NUM = 14;
+  int THEN = 14;
   /** RegularExpression Id. */
-  int DIGIT = 15;
+  int ELSE = 15;
+  /** RegularExpression Id. */
+  int LOOP = 16;
+  /** RegularExpression Id. */
+  int REPEAT = 17;
+  /** RegularExpression Id. */
+  int TURN = 18;
+  /** RegularExpression Id. */
+  int FACE = 19;
+  /** RegularExpression Id. */
+  int CMD_SKIP = 20;
+  /** RegularExpression Id. */
+  int MOVEDIR = 21;
+  /** RegularExpression Id. */
+  int RUNDIRS = 22;
+  /** RegularExpression Id. */
+  int MOVEFACE = 23;
+  /** RegularExpression Id. */
+  int NULL = 24;
+  /** RegularExpression Id. */
+  int ASSIGN = 25;
+  /** RegularExpression Id. */
+  int SEMICOLON = 26;
+  /** RegularExpression Id. */
+  int NAME = 27;
+  /** RegularExpression Id. */
+  int FACING = 28;
+  /** RegularExpression Id. */
+  int BLOCKED = 29;
+  /** RegularExpression Id. */
+  int CANPUT = 30;
+  /** RegularExpression Id. */
+  int BALLOONS = 31;
+  /** RegularExpression Id. */
+  int CHIPS = 32;
+  /** RegularExpression Id. */
+  int OBJECTYPE = 33;
+  /** RegularExpression Id. */
+  int DIRECTION = 34;
+  /** RegularExpression Id. */
+  int ORIENTATION = 35;
+  /** RegularExpression Id. */
+  int DIM = 36;
+  /** RegularExpression Id. */
+  int MYXPOS = 37;
+  /** RegularExpression Id. */
+  int MYYPOS = 38;
+  /** RegularExpression Id. */
+  int MYCHIPS = 39;
+  /** RegularExpression Id. */
+  int MYBALLOONS = 40;
+  /** RegularExpression Id. */
+  int BALLOONSHERE = 41;
+  /** RegularExpression Id. */
+  int CHIPSHERE = 42;
+  /** RegularExpression Id. */
+  int SPACES = 43;
+  /** RegularExpression Id. */
+  int NUM = 44;
+  /** RegularExpression Id. */
+  int DIGIT = 45;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 46;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -50,14 +112,45 @@ public interface RobotConstants {
     "\"Pop\"",
     "\"GO\"",
     "\"HOP\"",
-    "\"BALLOONS\"",
-    "\"CHIPS\"",
+    "\"defvar\"",
+    "\"if\"",
+    "\"then\"",
+    "\"else\"",
+    "\"loop\"",
+    "\"repeat\"",
+    "\"turn\"",
+    "\"face\"",
+    "\"skip\"",
+    "\"move-dir\"",
+    "\"run-dirs\"",
+    "\"move-face\"",
+    "\"null\"",
+    "\"=\"",
+    "\";\"",
+    "<NAME>",
+    "\"facing\"",
+    "\"blocked\"",
+    "\"CAN-PUT?\"",
+    "\":balloons\"",
+    "\":chips\"",
+    "<OBJECTYPE>",
+    "<DIRECTION>",
+    "<ORIENTATION>",
+    "\"dim\"",
+    "\"myXpos\"",
+    "\"myYpos\"",
+    "\"myChips\"",
+    "\"myBalloons\"",
+    "\"balloonsHere\"",
+    "\"chipsHere\"",
+    "\"spaces\"",
     "<NUM>",
     "<DIGIT>",
+    "<IDENTIFIER>",
     "\"(\"",
     "\")\"",
     "\",\"",
-    "\";\"",
+    "\"?\"",
   };
 
 }
