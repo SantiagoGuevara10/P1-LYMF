@@ -43,6 +43,7 @@ public class Robot
 
 	private RobotWorldDec world;
 	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
+	
 	boolean canMove(String direction) {
     Point currentPos = world.getPosition();
     Point newPos;
@@ -130,8 +131,9 @@ TOKEN:
   | < SEMICOLON: ";" >
   | < NAME : "Mov"| "Right" | "Put" | "Pick" | "Pop" |"GO" | "HOP" >
   | < FACING: "facing" >
-  | < BLOCKED: "blocked" >
+  | < BLOCKED: "blocked?" >
   | < CANPUT: "can-put?" >
+  | < CANPICK: "can-pick?" >
   | < CANMOVE: "can-move?" >
   | < ISZERO: "isZero?" >
   | < NOT: "not" >
@@ -236,6 +238,26 @@ TOKEN:
 	
 	}
 	| isZero(){
+	
+	}
+
+	| isBlockedCondition(){
+	
+	}
+
+
+	| canPickCondition(){
+	
+	}
+	
+
+	| canPutCondition(){
+	
+	}
+	
+	
+
+	| notCondition(){
 	
 	}
 	
@@ -644,9 +666,110 @@ boolean isZero() :
         return value == 0;
     }
 }
-     
-   
-   
+
+boolean isBlockedCondition() :
+{
+    Point currentPosition, nextPosition;
+    boolean result = false;
+}
+{
+    "(" <BLOCKED> ")"
+    {
+        currentPosition = world.getPosition();
+        int facing = world.getFacing();
+       
+        nextPosition = new Point(currentPosition.x, currentPosition.y);
+
+        if (facing == RobotWorld.NORTH) {
+            nextPosition.y -= 1; 
+        } else if (facing == RobotWorld.SOUTH) {
+            nextPosition.y += 1; 
+        } else if (facing == RobotWorld.EAST) {
+            nextPosition.x += 1; 
+        } else if (facing == RobotWorld.WEST) {
+            nextPosition.x -= 1;
+        }
+
+       
+        if(nextPosition.x < 1 || nextPosition.x > world.getN() || nextPosition.y < 1 || nextPosition.y > world.getN()) {
+            result = true; 
+            System.out.println("El camino esta bloqueado.");
+        } else {
+          
+            result = world.isBlocked(nextPosition);
+            if(result) {
+                System.out.println("El camino esta bloqueado.");
+            } else {
+                System.out.println("El camino esta libre");
+            }
+        }
+        { return result; }
+    }
+}
+
+
+boolean canPutCondition() :
+{
+    Token x;
+    int n;
+    boolean result = false;
+}
+{
+    "(" <CANPUT> x= < OBJECTYPE> n=value() ")"
+    {
+        if ("chips".equalsIgnoreCase(x.image)) {
+       
+            result = (world.freeSpacesForChips() >= n);
+        } else if ("balloons".equalsIgnoreCase(x.image)) {
+            
+            result = (world.getMyBalloons() >= n);
+        }
+        { return result; }
+    }
+}
+
+
+boolean canPickCondition() :
+{
+    Token x;
+    int n;
+    boolean result = false;
+}
+{
+    "(" <CANPICK> x=<OBJECTYPE> n=value() ")"
+    {
+        if ("chips".equalsIgnoreCase(x.image)) {
+
+            result = (world.chipsToPick() >= n);
+        } else if ("balloons".equalsIgnoreCase(x.image)) {
+        
+            result = (world.countBalloons() >= n);
+        }
+        { return result; }
+    }
+}
+
+
+boolean condition() :
+{
+    
+    boolean result = false;
+}
+{
+    
+    { return result; }
+}
+
+boolean notCondition() :
+{
+    boolean condResult = false;
+}
+{
+    "(" <NOT> condResult=condition() ")"
+    {
+        return !condResult;
+    }
+}
 
 
 	/**
@@ -673,10 +796,6 @@ boolean isZero() :
 			return total;
 		}
 	}
-	
-
-
-
 
 
 
