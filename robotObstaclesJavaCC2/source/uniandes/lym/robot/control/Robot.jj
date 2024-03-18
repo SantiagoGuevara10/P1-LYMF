@@ -99,7 +99,8 @@ PARSER_END(Robot)
 
 SKIP:
 {
-	" "
+  " "                 
+	       
 	|	"\r"
 	|	"\t"
 	| "\n"
@@ -115,6 +116,7 @@ TOKEN:
   | < GO: "GO" >
   | < HOP: "HOP" >
   | < DEFVAR: "defvar" >
+  | < DEFUN: "defun">
   | < IF: "if" >
   | < THEN: "then" >
   | < ELSE: "else" >
@@ -260,14 +262,13 @@ TOKEN:
 	| notCondition(){
 	
 	}
-	
-
-       
-    ) ";" {
-        return true;
+	       
+    ){
+       return true;
     })+
     | <EOF> {return false;} 
 }
+
 
 
 
@@ -342,6 +343,8 @@ Token tokenEspecial() :
     )
     { return token; }
 }
+
+
 String identifier():
 {
     Token t;
@@ -349,6 +352,8 @@ String identifier():
 {
     t=<IDENTIFIER> { return t.image; }
 }
+
+
 
 int varOrNum() throws Error:
 {
@@ -374,6 +379,10 @@ int varOrNum() throws Error:
         return total;
     })
 }
+
+
+
+
 void asignVar():
 {
     Token varName;
@@ -796,12 +805,6 @@ boolean notCondition() :
 			return total;
 		}
 	}
-
-
-
-
-
-
 
 
 

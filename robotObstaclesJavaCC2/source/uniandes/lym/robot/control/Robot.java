@@ -79,45 +79,45 @@ public class Robot implements RobotConstants {
       while (true) {
         if (jj_2_1(2)) {
           jj_consume_token(RIGHT);
-          jj_consume_token(51);
           jj_consume_token(52);
+          jj_consume_token(53);
 world.turnRight();
            salida = "Command: Turn right executed.";
         } else if (jj_2_2(2)) {
           jj_consume_token(MOV);
-          jj_consume_token(51);
-          x = num();
           jj_consume_token(52);
+          x = num();
+          jj_consume_token(53);
 world.moveForward(x, false);
            salida = "Command: Move forward " + x + " steps executed.";
         } else if (jj_2_3(2)) {
           jj_consume_token(HOP);
-          jj_consume_token(51);
-          x = num();
           jj_consume_token(52);
+          x = num();
+          jj_consume_token(53);
 world.moveForward(x, true);
            salida = "Command: Jump forward " + x + " steps executed.";
         } else if (jj_2_4(2)) {
           jj_consume_token(GO);
-          jj_consume_token(51);
-          x = num();
-          jj_consume_token(53);
-          y = num();
           jj_consume_token(52);
+          x = num();
+          jj_consume_token(54);
+          y = num();
+          jj_consume_token(53);
 world.setPostion(x,y);
            salida = "Command: Attempt to GO to (" + x + ", " + y + ") received.";
         } else if (jj_2_5(2)) {
           jj_consume_token(POP);
-          jj_consume_token(51);
-          x = num();
           jj_consume_token(52);
+          x = num();
+          jj_consume_token(53);
 world.popBalloons(x);
            salida = "Command: Pop " + x + " balloons executed.";
         } else if (jj_2_6(2)) {
-          jj_consume_token(51);
+          jj_consume_token(52);
           jj_consume_token(CMD_SKIP);
           x = num();
-          jj_consume_token(52);
+          jj_consume_token(53);
 world.moveForward(x, true);
            salida = "Command: Jump forward " + x + " steps executed.";
         } else if (jj_2_7(2)) {
@@ -172,7 +172,6 @@ world.moveForward(x, true);
           jj_consume_token(-1);
           throw new ParseException();
         }
-        jj_consume_token(SEMICOLON);
 {if ("" != null) return true;}
         if (jj_2_23(2)) {
           ;
@@ -192,7 +191,7 @@ world.moveForward(x, true);
 
   final public void put() throws ParseException {int f = 0;
     Token x;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(PUT);
     if (jj_2_26(2)) {
       x = jj_consume_token(CHIPS);
@@ -203,7 +202,7 @@ world.moveForward(x, true);
       throw new ParseException();
     }
     f = num();
-    jj_consume_token(52);
+    jj_consume_token(53);
 if (x.kind == CHIPS) {
             world.putChips(f);
             salida = "Command: Put " + f + " chips executed.";
@@ -215,7 +214,7 @@ if (x.kind == CHIPS) {
 
   final public void pick() throws ParseException {int f = 0;
     Token x;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(PICK);
     if (jj_2_28(2)) {
       x = jj_consume_token(CHIPS);
@@ -226,7 +225,7 @@ if (x.kind == CHIPS) {
       throw new ParseException();
     }
     f = num();
-    jj_consume_token(52);
+    jj_consume_token(53);
 if (x.kind == CHIPS) {
             world.pickChips(f);
         salida = "Command: Picked " + f + " chips executed.";
@@ -238,11 +237,11 @@ if (x.kind == CHIPS) {
 
   final public void defVar() throws ParseException, Error {Token varName;
     int value;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(DEFVAR);
     varName = tokenEspecial();
     value = varOrNum();
-    jj_consume_token(52);
+    jj_consume_token(53);
 String varNameStr = varName.image;
         if (variables.containsKey(varNameStr)) {
             {if (true) throw new Error("Variable " + varNameStr + " is already defined.");}
@@ -312,11 +311,11 @@ try {
 
   final public void asignVar() throws ParseException {Token varName;
     int value;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(ASSIGN);
     varName = tokenEspecial();
     value = varOrNum();
-    jj_consume_token(52);
+    jj_consume_token(53);
 String varNameStr = varName.image;
         if (variables.containsKey(varNameStr)) {
             {if (true) throw new Error("Variable " + varNameStr + " is already defined.");}
@@ -326,10 +325,10 @@ String varNameStr = varName.image;
 }
 
   final public void turn() throws ParseException {Token dir;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(TURN);
     dir = jj_consume_token(DIRECTION);
-    jj_consume_token(52);
+    jj_consume_token(53);
 if (dir.image.equals(":left")) {
     world.turnRight();
     world.turnRight();
@@ -343,10 +342,10 @@ if (dir.image.equals(":left")) {
 }
 
   final public void face() throws ParseException {Token direction;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(FACE);
     direction = jj_consume_token(ORIENTATION);
-    jj_consume_token(52);
+    jj_consume_token(53);
 switch (direction.image) {
             case ":north":
                 faceDirection(RobotWorld.NORTH);
@@ -379,11 +378,11 @@ while(true) {
   final public void moveDir() throws ParseException {int n = 0;
     Token dir;
     int originalFacing;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(MOVEDIR);
     n = num();
     dir = jj_consume_token(DIRECTION);
-    jj_consume_token(52);
+    jj_consume_token(53);
 originalFacing = world.getFacing();
         switch (dir.image) {
             case ":front":
@@ -422,11 +421,11 @@ while (world.getFacing() != originalFacing) {
   final public void moveFace() throws ParseException {int steps;
     Token direction;
     Token stepsToken;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(MOVEFACE);
     stepsToken = jj_consume_token(NUM);
     direction = jj_consume_token(ORIENTATION);
-    jj_consume_token(52);
+    jj_consume_token(53);
 steps = Integer.parseInt(stepsToken.image);
 
 
@@ -441,7 +440,7 @@ steps = Integer.parseInt(stepsToken.image);
   final public void runDirs() throws ParseException {List<Token> directions = new ArrayList<>();
     Token dir;
     int originalFacing;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(RUNDIRS);
     dir = jj_consume_token(DIRECTION);
 directions.add(dir);
@@ -455,7 +454,7 @@ directions.add(dir);
       dir = jj_consume_token(DIRECTION);
 directions.add(dir);
     }
-    jj_consume_token(52);
+    jj_consume_token(53);
 originalFacing = world.getFacing();
 
 
@@ -489,9 +488,9 @@ originalFacing = world.getFacing();
 }
 
   final public void nullCommand() throws ParseException {
-    jj_consume_token(51);
-    jj_consume_token(NULL);
     jj_consume_token(52);
+    jj_consume_token(NULL);
+    jj_consume_token(53);
 }
 
   final public int value() throws ParseException {Token t;
@@ -540,11 +539,11 @@ Integer value = variables.get(t.image);
 }
 
   final public boolean facingCondition() throws ParseException {Token direction;
-    jj_consume_token(51);
-    jj_consume_token(FACING);
-    jj_consume_token(54);
-    direction = jj_consume_token(ORIENTATION);
     jj_consume_token(52);
+    jj_consume_token(FACING);
+    jj_consume_token(55);
+    direction = jj_consume_token(ORIENTATION);
+    jj_consume_token(53);
 switch(direction.image)
         {
             case ":north":
@@ -562,10 +561,10 @@ switch(direction.image)
 }
 
   final public boolean canMove() throws ParseException {Token direction;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(CANMOVE);
     direction = jj_consume_token(ORIENTATION);
-    jj_consume_token(52);
+    jj_consume_token(53);
 switch(direction.image)
         {
             case ":north":
@@ -583,19 +582,19 @@ switch(direction.image)
 }
 
   final public boolean isZero() throws ParseException {int value;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(ISZERO);
     value = value();
-    jj_consume_token(52);
+    jj_consume_token(53);
 {if ("" != null) return value == 0;}
     throw new Error("Missing return statement in function");
 }
 
   final public boolean isBlockedCondition() throws ParseException {Point currentPosition, nextPosition;
     boolean result = false;
-    jj_consume_token(51);
-    jj_consume_token(BLOCKED);
     jj_consume_token(52);
+    jj_consume_token(BLOCKED);
+    jj_consume_token(53);
 currentPosition = world.getPosition();
         int facing = world.getFacing();
 
@@ -631,11 +630,11 @@ currentPosition = world.getPosition();
   final public boolean canPutCondition() throws ParseException {Token x;
     int n;
     boolean result = false;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(CANPUT);
     x = jj_consume_token(OBJECTYPE);
     n = value();
-    jj_consume_token(52);
+    jj_consume_token(53);
 if ("chips".equalsIgnoreCase(x.image)) {
 
             result = (world.freeSpacesForChips() >= n);
@@ -650,11 +649,11 @@ if ("chips".equalsIgnoreCase(x.image)) {
   final public boolean canPickCondition() throws ParseException {Token x;
     int n;
     boolean result = false;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(CANPICK);
     x = jj_consume_token(OBJECTYPE);
     n = value();
-    jj_consume_token(52);
+    jj_consume_token(53);
 if ("chips".equalsIgnoreCase(x.image)) {
 
             result = (world.chipsToPick() >= n);
@@ -672,10 +671,10 @@ if ("chips".equalsIgnoreCase(x.image)) {
 }
 
   final public boolean notCondition() throws ParseException {boolean condResult = false;
-    jj_consume_token(51);
+    jj_consume_token(52);
     jj_consume_token(NOT);
     condResult = condition();
-    jj_consume_token(52);
+    jj_consume_token(53);
 {if ("" != null) return !condResult;}
     throw new Error("Missing return statement in function");
 }
@@ -1179,12 +1178,6 @@ try
     return false;
   }
 
-  private boolean jj_3_40()
- {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
   private boolean jj_3_24()
  {
     Token xsp;
@@ -1196,10 +1189,10 @@ try
     return false;
   }
 
-  private boolean jj_3R_moveDir_462_5_8()
+  private boolean jj_3R_canPickCondition_748_5_16()
  {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(MOVEDIR)) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(CANPICK)) return true;
     return false;
   }
 
@@ -1209,60 +1202,60 @@ try
     return false;
   }
 
-  private boolean jj_3_22()
- {
-    if (jj_3R_notCondition_768_5_18()) return true;
-    return false;
-  }
-
   private boolean jj_3_39()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3R_canPickCondition_739_5_16()
+  private boolean jj_3R_canMove_649_5_13()
  {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(CANPICK)) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(CANMOVE)) return true;
     return false;
   }
 
-  private boolean jj_3R_canMove_640_5_13()
+  private boolean jj_3_22()
  {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(CANMOVE)) return true;
+    if (jj_3R_notCondition_777_5_18()) return true;
     return false;
   }
 
   private boolean jj_3_21()
  {
-    if (jj_3R_canPutCondition_718_5_17()) return true;
+    if (jj_3R_canPutCondition_727_5_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_runDirs_543_4_9()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(RUNDIRS)) return true;
     return false;
   }
 
   private boolean jj_3_20()
  {
-    if (jj_3R_canPickCondition_739_5_16()) return true;
+    if (jj_3R_canPickCondition_748_5_16()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_canPutCondition_727_5_17()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(CANPUT)) return true;
     return false;
   }
 
   private boolean jj_3_19()
  {
-    if (jj_3R_isBlockedCondition_676_5_15()) return true;
+    if (jj_3R_isBlockedCondition_685_5_15()) return true;
     return false;
   }
 
   private boolean jj_3_38()
  {
     if (jj_scan_token(MOV)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_runDirs_534_4_9()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(RUNDIRS)) return true;
     return false;
   }
 
@@ -1280,13 +1273,20 @@ try
 
   private boolean jj_3_18()
  {
-    if (jj_3R_isZero_664_5_14()) return true;
+    if (jj_3R_isZero_673_5_14()) return true;
     return false;
   }
 
   private boolean jj_3_35()
  {
     if (jj_scan_token(HOP)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_facingCondition_626_5_11()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(FACING)) return true;
     return false;
   }
 
@@ -1302,13 +1302,6 @@ try
     return false;
   }
 
-  private boolean jj_3R_canPutCondition_718_5_17()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(CANPUT)) return true;
-    return false;
-  }
-
   private boolean jj_3_32()
  {
     if (jj_scan_token(PUT)) return true;
@@ -1321,46 +1314,27 @@ try
     return false;
   }
 
+  private boolean jj_3_16()
+ {
+    if (jj_3R_pick_298_5_12()) return true;
+    return false;
+  }
+
   private boolean jj_3_30()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     return false;
   }
 
-  private boolean jj_3_16()
- {
-    if (jj_3R_pick_297_5_12()) return true;
-    return false;
-  }
-
   private boolean jj_3_17()
  {
-    if (jj_3R_canMove_640_5_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_facingCondition_617_5_11()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(FACING)) return true;
+    if (jj_3R_canMove_649_5_13()) return true;
     return false;
   }
 
   private boolean jj_3_15()
  {
-    if (jj_3R_facingCondition_617_5_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_14()
- {
-    if (jj_3R_moveFace_513_5_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3_13()
- {
-    if (jj_3R_runDirs_534_4_9()) return true;
+    if (jj_3R_facingCondition_626_5_11()) return true;
     return false;
   }
 
@@ -1370,16 +1344,10 @@ try
     return false;
   }
 
-  private boolean jj_3R_moveFace_513_5_10()
+  private boolean jj_3R_moveFace_522_5_10()
  {
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
     if (jj_scan_token(MOVEFACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_12()
- {
-    if (jj_3R_moveDir_462_5_8()) return true;
     return false;
   }
 
@@ -1389,16 +1357,16 @@ try
     return false;
   }
 
-  private boolean jj_3R_face_416_5_6()
+  private boolean jj_3_14()
  {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(FACE)) return true;
+    if (jj_3R_moveFace_522_5_10()) return true;
     return false;
   }
 
-  private boolean jj_3_29()
+  private boolean jj_3R_face_425_5_6()
  {
-    if (jj_scan_token(BALLOONS)) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(FACE)) return true;
     return false;
   }
 
@@ -1408,9 +1376,9 @@ try
     return false;
   }
 
-  private boolean jj_3_11()
+  private boolean jj_3_13()
  {
-    if (jj_3R_put_280_5_7()) return true;
+    if (jj_3R_runDirs_543_4_9()) return true;
     return false;
   }
 
@@ -1420,22 +1388,15 @@ try
     return false;
   }
 
-  private boolean jj_3R_defVar_316_5_3()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(DEFVAR)) return true;
-    return false;
-  }
-
   private boolean jj_3_47()
  {
     if (jj_scan_token(MYCHIPS)) return true;
     return false;
   }
 
-  private boolean jj_3_10()
+  private boolean jj_3_12()
  {
-    if (jj_3R_face_416_5_6()) return true;
+    if (jj_3R_moveDir_471_5_8()) return true;
     return false;
   }
 
@@ -1445,15 +1406,21 @@ try
     return false;
   }
 
-  private boolean jj_3_45()
+  private boolean jj_3_11()
  {
-    if (jj_scan_token(MYXPOS)) return true;
+    if (jj_3R_put_281_5_7()) return true;
     return false;
   }
 
-  private boolean jj_3_9()
+  private boolean jj_3_29()
  {
-    if (jj_3R_turn_398_5_5()) return true;
+    if (jj_scan_token(BALLOONS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_45()
+ {
+    if (jj_scan_token(MYXPOS)) return true;
     return false;
   }
 
@@ -1463,15 +1430,16 @@ try
     return false;
   }
 
-  private boolean jj_3_8()
+  private boolean jj_3R_defVar_317_5_3()
  {
-    if (jj_3R_asignVar_383_3_4()) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(DEFVAR)) return true;
     return false;
   }
 
-  private boolean jj_3_28()
+  private boolean jj_3_10()
  {
-    if (jj_scan_token(CHIPS)) return true;
+    if (jj_3R_face_425_5_6()) return true;
     return false;
   }
 
@@ -1481,16 +1449,53 @@ try
     return false;
   }
 
-  private boolean jj_3_7()
+  private boolean jj_3_9()
  {
-    if (jj_3R_defVar_316_5_3()) return true;
+    if (jj_3R_turn_407_5_5()) return true;
     return false;
   }
 
-  private boolean jj_3R_turn_398_5_5()
+  private boolean jj_3R_turn_407_5_5()
  {
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
     if (jj_scan_token(TURN)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8()
+ {
+    if (jj_3R_asignVar_392_3_4()) return true;
+    return false;
+  }
+
+  private boolean jj_3_28()
+ {
+    if (jj_scan_token(CHIPS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_43()
+ {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3_7()
+ {
+    if (jj_3R_defVar_317_5_3()) return true;
+    return false;
+  }
+
+  private boolean jj_3_42()
+ {
+    if (jj_scan_token(NUM)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_isBlockedCondition_685_5_15()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(BLOCKED)) return true;
     return false;
   }
 
@@ -1502,55 +1507,50 @@ try
 
   private boolean jj_3_6()
  {
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
     if (jj_scan_token(CMD_SKIP)) return true;
     return false;
   }
 
-  private boolean jj_3_43()
+  private boolean jj_3R_notCondition_777_5_18()
  {
-    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(NOT)) return true;
     return false;
   }
 
   private boolean jj_3_5()
  {
     if (jj_scan_token(POP)) return true;
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
     return false;
   }
 
-  private boolean jj_3R_pick_297_5_12()
+  private boolean jj_3R_pick_298_5_12()
  {
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
     if (jj_scan_token(PICK)) return true;
     return false;
   }
 
-  private boolean jj_3_42()
+  private boolean jj_3R_asignVar_392_3_4()
  {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_isBlockedCondition_676_5_15()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(BLOCKED)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_notCondition_768_5_18()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(NOT)) return true;
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
   private boolean jj_3_4()
  {
     if (jj_scan_token(GO)) return true;
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_isZero_673_5_14()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(ISZERO)) return true;
     return false;
   }
 
@@ -1563,42 +1563,41 @@ try
   private boolean jj_3_3()
  {
     if (jj_scan_token(HOP)) return true;
-    if (jj_scan_token(51)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_asignVar_383_3_4()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(ASSIGN)) return true;
+    if (jj_scan_token(52)) return true;
     return false;
   }
 
   private boolean jj_3_2()
  {
     if (jj_scan_token(MOV)) return true;
-    if (jj_scan_token(51)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_isZero_664_5_14()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(ISZERO)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_put_280_5_7()
- {
-    if (jj_scan_token(51)) return true;
-    if (jj_scan_token(PUT)) return true;
+    if (jj_scan_token(52)) return true;
     return false;
   }
 
   private boolean jj_3_1()
  {
     if (jj_scan_token(RIGHT)) return true;
-    if (jj_scan_token(51)) return true;
+    if (jj_scan_token(52)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_moveDir_471_5_8()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(MOVEDIR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_put_281_5_7()
+ {
+    if (jj_scan_token(52)) return true;
+    if (jj_scan_token(PUT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_40()
+ {
+    if (jj_scan_token(NUM)) return true;
     return false;
   }
 
@@ -1832,7 +1831,7 @@ try
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[55];
+	 boolean[] la1tokens = new boolean[56];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -1849,7 +1848,7 @@ try
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 55; i++) {
+	 for (int i = 0; i < 56; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;
