@@ -42,6 +42,13 @@ public class Robot
 
 
 	private RobotWorldDec world;
+
+	void setWorld(RobotWorld w) {
+		world = (RobotWorldDec) w;	
+	}
+
+	String salida=new String();
+	
 	private HashMap<String, Integer> variables = new HashMap<String, Integer>();
 	
 	boolean canMove(String direction) {
@@ -85,22 +92,15 @@ public class Robot
         case ":west":
             while(!world.facingWest()) world.turnRight();
             break;
-    }
-}
-
-	
-	void setWorld(RobotWorld w) {
-		world = (RobotWorldDec) w;	
+    	}
 	}
 
-	String salida=new String();
 }
 PARSER_END(Robot)
 
 SKIP:
 {
-  " "                 
-	       
+  " "                 	       
 	|	"\r"
 	|	"\t"
 	| "\n"
@@ -151,7 +151,6 @@ TOKEN:
   | < DIRECTION: ":left" | ":right" | ":around" | ":back" |":front" |":up" |":down">
   | < ORIENTATION: ":north" | ":south" | ":east" | ":west" >
   
-  
 }
 
 TOKEN:
@@ -169,18 +168,25 @@ TOKEN:
   | < IDENTIFIER: ["a"-"z", "A"-"Z"] (<DIGIT> | ["a"-"z", "A"-"Z"])* >
 }
 
-
-
-	
 	boolean command(Console sistema):
 {   
     int x, y;
     String salida = new String(); 
 }
 {
-    (
-      (
-        
+    commands(false, null) {return true;}
+
+    | <EOF> {return false;} 
+}
+
+
+void commands(boolean reproducir, ArrayList<String> instructions):
+{
+   int x, y;
+   String salida = new String(); 
+}
+{
+	(
        <RIGHT> "(" ")" {
            world.turnRight(); 
            salida = "Command: Turn right executed.";
@@ -247,30 +253,32 @@ TOKEN:
 	
 	}
 
-
 	| canPickCondition(){
 	
 	}
 	
-
 	| canPutCondition(){
 	
 	}
 	
-	
-
 	| notCondition(){
 	
 	}
-	       
-    ){
-       return true;
-    })+
-    | <EOF> {return false;} 
+	| repeat() {
+	  }        
+    )
+
 }
 
+void repeat():
+{
+    ArrayList<String> instructions = new ArrayList<String>();
+    int var;
+}
 
-
+{
+    "(" < REPEAT> var=varOrNum() (commands(false,instructions))+ ")"
+}
 
 void put() :
 {
@@ -278,7 +286,7 @@ void put() :
     Token x;
 }
 {
-    "(" <PUT> (x=<CHIPS> | x=<BALLOONS>) f=num() ")"
+    "(" <PUT> (x=<CHIPS> | x=<BALLOONS>) f=varOrNum() ")"
     {
         if (x.kind == CHIPS) {
             world.putChips(f); 
@@ -289,6 +297,7 @@ void put() :
         }
     }
 }
+
 void pick() :
 {
     int f = 0; 
@@ -354,7 +363,6 @@ String identifier():
 }
 
 
-
 int varOrNum() throws Error:
 {
     int total = 0;
@@ -379,8 +387,6 @@ int varOrNum() throws Error:
         return total;
     })
 }
-
-
 
 
 void asignVar():
@@ -417,6 +423,7 @@ void turn():
   }
 }
 }
+
 void face(): 
 {
     Token direction;
@@ -512,6 +519,7 @@ void restoreOriginalFacing(int originalFacing):
         
     }
 }
+
 void moveFace() : 
 {
     int steps;
@@ -533,6 +541,7 @@ void moveFace() :
         }
     }
 }
+
 void runDirs() :
 {
     List<Token> directions = new ArrayList<>();
@@ -779,8 +788,6 @@ boolean notCondition() :
         return !condResult;
     }
 }
-
-
 	/**
 	 * Unsigned decimal number
 	 * @return the corresponding value of the string
@@ -805,6 +812,8 @@ boolean notCondition() :
 			return total;
 		}
 	}
+
+
 
 
 
