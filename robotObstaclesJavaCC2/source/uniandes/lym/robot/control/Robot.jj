@@ -94,15 +94,26 @@ public class Robot
             break;
     	}
 	}
-
+	
 	public void readCommand(ArrayList <String> commands) {
-		int i = 0;
-		while (i < commands.size()){
-			if (commands.get(i).equals("right")){
-				right();
-			}
-		}
-	  }
+        int i = 0;
+        while (i < commands.size()){
+            if (commands.get(i).equals("right")){
+                right();
+            } else if (commands.get(i).equals("move")){
+            	move(commands.get(i+1));
+            } else if (commands.get(i).equals("hop")){
+            	hop(commands.get(i+1));
+            } else if(commands.get(i).equals("go")){
+            	  go(commands.get(i+1),commands.get(i+2));
+            }else if (commands.get(i).equals("put")){
+            	put(commands.get(i+1),commands.get(i+2));
+            }else if (commands.get(i).equals("pick")) {
+               pick(commands.get(i+1),commands.get(i+2));
+             }
+            
+        }
+    }
 	
 	public void right(){
 		world.turnRight(); 
@@ -111,6 +122,146 @@ public class Robot
 	public void move(int x){
 		world.moveForward(x, false);
 	}
+	
+	public void hop(int x){
+		world.moveForward(x, true);
+	}
+
+	public void skip(int x) {
+	  world.moveForward(x, true);
+           salida = "Command: Jump forward " + x + " steps executed.";
+	}
+	
+	public void pop(int x){
+		try {
+           world.popBalloons(x);
+           salida = "Command: Pop " + x + " balloons executed.";
+       } catch (Exception e) {
+           throw new Error("Error executing POP command: " + e.getMessage());
+       }	
+	}
+	
+	public void go(int x, int y){
+		try {
+           world.setPostion(x, y); 
+           salida = "Command: Attempt to GO to (" + x + ", " + y + ") received.";
+       } catch (Exception e) {
+           throw new Error("Error executing GO command: " + e.getMessage());
+       }
+	
+	}
+	
+	public void put(String objeto, int n){  
+		if (objeto == ":chips") {
+                world.putChips(n); 
+                salida = "Command: Put " + n + " chips executed.";
+            } else if (objeto == ":balloons") {
+                world.putBalloons(n); 
+                salida = "Command: Put " + n + " balloons executed.";
+            }
+          
+    }
+    public void pick(String objeto , int n) {
+      
+      if (objeto == ":chips") {
+                world.pickChips(n); 
+                salida = "Command: Picked " + n + " chips executed.";
+            } else if (objeto == ":balloons") {
+                world.grabBalloons(n); 
+                salida = "Command: Picked " + n + " balloons executed.";
+            }
+    }
+    
+    public void defVar(String name , int value){
+    	if (variables.containsKey(name)) {
+            throw new Error("Variable " + name + " is already defined.");
+        }
+        variables.put(name, value);
+    }
+
+
+    public void asignVar ( String name , int n) {
+      if (variables.containsKey(name)) {
+            throw new Error("Variable " + name + " is already defined.");
+        }
+        variables.put(name, n);
+        salida = "Variable " + name + " defined with value: " + n;
+
+      }
+
+
+      public void turn ( String name) { 
+            if (name == ":left") {
+                world.turnRight();
+                world.turnRight();
+                world.turnRight();
+            } else if (name == ":right") {
+                world.turnRight();
+            } else if (name == ":around") {
+                world.turnRight();
+                world.turnRight();
+            }
+      } 
+	public void face( String dir){
+		try {
+            switch (dir) {
+                case ":north":
+                    faceDirection(RobotWorld.NORTH);
+                    break;
+                case ":south":
+                    faceDirection(RobotWorld.SOUTH);
+                    break;
+                case ":east":
+                    faceDirection(RobotWorld.EAST);
+                    break;
+                case ":west":
+                    faceDirection(RobotWorld.WEST);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid direction: " + direction.image);
+            }
+        }
+    } catch (Exception e) {
+        throw new Error("Error executing FACE command: " + e.getMessage());
+    }
+	}
+
+    public void moveDir (int x , String name, int origin) {
+    
+            origin = world.getFacing(); 
+            switch (name) {
+                case ":front":
+                    world.moveForward(x, false);
+                    break;
+                case ":right":
+                    world.turnRight();
+                    world.moveForward(x, false);
+                    restoreOriginalFacing(name);
+                    break;
+                case ":left":
+                    world.turnRight();
+                    world.turnRight();
+                    world.turnRight();
+                    world.moveForward(x, false);
+                    restoreOriginalFacing(name);
+                    break;
+                case ":back":
+                    world.turnRight();
+                    world.turnRight();
+                    world.moveForward(x, false);
+                    restoreOriginalFacing(name);
+                    break;
+            }
+        }
+    } catch (Exception e) {
+        throw new Error("Error executing moveDir: " + e.getMessage());
+    }
+}
+    
+}
+    
+    
+ 
 }
 PARSER_END(Robot)
 
@@ -222,27 +373,45 @@ String commands(boolean reproducir, ArrayList<String> instructions):
        }
     }
     |   <MOV>  "(" x=num() ")" {
+    	if (reproducir){
            try {
                world.moveForward(x, false); 
                salida = "Command: Move forward " + x + " steps executed.";
            } catch (Exception e) {
                throw new Error("Error executing MOV command: " + e.getMessage());
            }
+        }
+        if (instructions != null){
+			instructions.add("move");
+			instructions.add(x)
+		}
        }
     |   <HOP>  "(" x=num() ")" {
+       if (reproducir){
        try {
            world.moveForward(x, true); 
            salida = "Command: Jump forward " + x + " steps executed.";
        } catch (Exception e) {
            throw new Error("Error executing HOP command: " + e.getMessage());
        }
+       if (instructions != null){
+       		instructions.add("hop");
+			instructions.add(x)
+       }
+       }
    }
      |   <GO>  "(" x=num() "," y=num()")" {
+       if (reproducir)
        try {
            world.setPostion(x, y); 
            salida = "Command: Attempt to GO to (" + x + ", " + y + ") received.";
        } catch (Exception e) {
            throw new Error("Error executing GO command: " + e.getMessage());
+           if (instructions != null){
+				instructions.add("go");
+				instructions.add(x);
+				instructions.add(y);
+		}
        }
    }
    
@@ -274,8 +443,6 @@ String commands(boolean reproducir, ArrayList<String> instructions):
     |   face() {
            
        }
-    | defVar() {
-      }
 	| put(){
 	
 	   }
@@ -332,7 +499,7 @@ void repeat():
 {
     "(" < REPEAT> var=varOrNum() (commands(false,instructions))+ ")"
     {
-   
+
     }
 }
 
@@ -344,7 +511,8 @@ void put() :
 {
     "(" <PUT> (x=<CHIPS> | x=<BALLOONS>) f=varOrNum() ")"
     {
-        try {
+        if (reproducir){
+        	try {
             if (x.kind == CHIPS) {
                 world.putChips(f); 
                 salida = "Command: Put " + f + " chips executed.";
@@ -355,7 +523,12 @@ void put() :
         } catch (Exception e) {
             throw new Error("Error executing PUT command: " + e.getMessage());
         }
+      } if (instructions != null){
+				instructions.add("put");
+				instructions.add(x.image);
+				instructions.add(y.image);  
     }
+   }
 }
 
 void pick() :
@@ -366,6 +539,7 @@ void pick() :
 {
     "(" <PICK> (x=<CHIPS> | x=<BALLOONS>) f=num() ")"
     {
+      if (reproducir) { 
         try {
             if (x.kind == CHIPS) {
                 world.pickChips(f); 
@@ -377,8 +551,12 @@ void pick() :
         } catch (Exception e) {
             throw new Error("Error executing PICK command: " + e.getMessage());
         }
-    }
+    } if (instructions != null){
+				instructions.add("pick");
+				instructions.add(x.image);
+				instructions.add(y.image);  
 }
+
 
     
 void defVar() throws Error:
@@ -474,9 +652,8 @@ void turn():
     Token dir;
 }
 {
-    try {
         "(" <TURN> dir=<DIRECTION> ")"
-        { 
+        {try { 
             if (dir.image.equals(":left")) {
                 world.turnRight();
                 world.turnRight();
