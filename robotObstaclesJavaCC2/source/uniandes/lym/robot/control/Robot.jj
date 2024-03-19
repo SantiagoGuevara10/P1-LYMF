@@ -95,6 +95,22 @@ public class Robot
     	}
 	}
 
+	public void readCommand(ArrayList <String> commands) {
+		int i = 0;
+		while (i < commands.size()){
+			if (commands.get(i).equals("right")){
+				right();
+			}
+		}
+	  }
+	
+	public void right(){
+		world.turnRight(); 
+	}
+	
+	public void move(int x){
+		world.moveForward(x, false);
+	}
 }
 PARSER_END(Robot)
 
@@ -108,8 +124,8 @@ SKIP:
 
 TOKEN: 
 {
-    < MOV: "Mov" >
-  | < RIGHT: "RIGHT" >
+    < MOV: "move" >
+  | < RIGHT: "right" >
   | < PUT: "Put" >
   | < PICK: "Pick" >
   | < POP: "Pop" >
@@ -170,48 +186,82 @@ TOKEN:
 
 	boolean command(Console sistema):
 {   
-    int x, y;
-    String salida = new String(); 
 }
 {
-    commands(false, null) {return true;}
+    salida=commands(false, null) {
+	try {
+	  Thread.sleep(900);
+	} catch (InterruptedException e) {
+	  System.err.format("IOException: %s%n", e);
+	 }
+	    			 
+	sistema.printOutput(salida);
+      return true;}
 
     | <EOF> {return false;} 
 }
 
 
-void commands(boolean reproducir, ArrayList<String> instructions):
+String commands(boolean reproducir, ArrayList<String> instructions):
 {
    int x, y;
    String salida = new String(); 
 }
 {
-	(
+    (
        <RIGHT> "(" ")" {
-           world.turnRight(); 
-           salida = "Command: Turn right executed.";
+       if (reproducir){
+           try {
+               world.turnRight(); 
+               salida = "Command: Turn right executed.";
+           } catch (Exception e) {
+               throw new Error("Error executing RIGHT command: " + e.getMessage());
+           }
+       } if(instructions != null){
+			instructions.add("right");
        }
+    }
     |   <MOV>  "(" x=num() ")" {
-           world.moveForward(x, false); 
-           salida = "Command: Move forward " + x + " steps executed.";
+           try {
+               world.moveForward(x, false); 
+               salida = "Command: Move forward " + x + " steps executed.";
+           } catch (Exception e) {
+               throw new Error("Error executing MOV command: " + e.getMessage());
+           }
        }
     |   <HOP>  "(" x=num() ")" {
+       try {
            world.moveForward(x, true); 
            salida = "Command: Jump forward " + x + " steps executed.";
+       } catch (Exception e) {
+           throw new Error("Error executing HOP command: " + e.getMessage());
        }
-    |   <GO>  "(" x=num() "," y=num()")" {
-           world.setPostion(x,y);
+   }
+     |   <GO>  "(" x=num() "," y=num()")" {
+       try {
+           world.setPostion(x, y); 
            salida = "Command: Attempt to GO to (" + x + ", " + y + ") received.";
+       } catch (Exception e) {
+           throw new Error("Error executing GO command: " + e.getMessage());
        }
+   }
    
     |   <POP> "(" x=num() ")" {
-           world.popBalloons(x); 
+       try {
+           world.popBalloons(x);
            salida = "Command: Pop " + x + " balloons executed.";
+       } catch (Exception e) {
+           throw new Error("Error executing POP command: " + e.getMessage());
        }
-    |  "("< CMD_SKIP >  x=num() ")" {
-           world.moveForward(x, true); 
+   }
+|   "(" <CMD_SKIP>  x=num() ")" {
+       try {
+           world.moveForward(x, true);
            salida = "Command: Jump forward " + x + " steps executed.";
+       } catch (Exception e) {
+           throw new Error("Error executing CMD_SKIP command: " + e.getMessage());
        }
+   }    
     |   defVar() {
            
        }
@@ -224,6 +274,8 @@ void commands(boolean reproducir, ArrayList<String> instructions):
     |   face() {
            
        }
+    | defVar() {
+      }
 	| put(){
 	
 	   }
@@ -266,7 +318,8 @@ void commands(boolean reproducir, ArrayList<String> instructions):
 	}
 	| repeat() {
 	  }        
-    )
+    )+
+   { return salida; }
 
 }
 
@@ -278,6 +331,9 @@ void repeat():
 
 {
     "(" < REPEAT> var=varOrNum() (commands(false,instructions))+ ")"
+    {
+   
+    }
 }
 
 void put() :
@@ -288,12 +344,16 @@ void put() :
 {
     "(" <PUT> (x=<CHIPS> | x=<BALLOONS>) f=varOrNum() ")"
     {
-        if (x.kind == CHIPS) {
-            world.putChips(f); 
-            salida = "Command: Put " + f + " chips executed.";
-        } else if (x.kind == BALLOONS) {
-            world.putBalloons(f); 
-            salida = "Command: Put " + f + " balloons executed.";
+        try {
+            if (x.kind == CHIPS) {
+                world.putChips(f); 
+                salida = "Command: Put " + f + " chips executed.";
+            } else if (x.kind == BALLOONS) {
+                world.putBalloons(f); 
+                salida = "Command: Put " + f + " balloons executed.";
+            }
+        } catch (Exception e) {
+            throw new Error("Error executing PUT command: " + e.getMessage());
         }
     }
 }
@@ -306,12 +366,16 @@ void pick() :
 {
     "(" <PICK> (x=<CHIPS> | x=<BALLOONS>) f=num() ")"
     {
-        if (x.kind == CHIPS) {
-            world.pickChips(f); 
-        salida = "Command: Picked " + f + " chips executed.";
-        } else if (x.kind == BALLOONS) {
-            world.grabBalloons(f); 
-        salida = "Command: Picked " + f + " balloons executed.";
+        try {
+            if (x.kind == CHIPS) {
+                world.pickChips(f); 
+                salida = "Command: Picked " + f + " chips executed.";
+            } else if (x.kind == BALLOONS) {
+                world.grabBalloons(f); 
+                salida = "Command: Picked " + f + " balloons executed.";
+            }
+        } catch (Exception e) {
+            throw new Error("Error executing PICK command: " + e.getMessage());
         }
     }
 }
@@ -331,7 +395,7 @@ void defVar() throws Error:
         variables.put(varNameStr, value);
         salida = "Variable " + varNameStr + " defined with value: " + value;
     }
-}
+}       
 
 Token tokenEspecial() : 
 {
@@ -407,21 +471,26 @@ void asignVar():
 
 void turn():
 {
-	Token dir;
+    Token dir;
 }
 {
-    "(" <TURN> dir=<DIRECTION> ")"
-    { if (dir.image.equals(":left")) {
-    world.turnRight();
-    world.turnRight();
-    world.turnRight();
-} else if (dir.image.equals(":right")) {
-    world.turnRight();
-} else if (dir.image.equals(":around")) {
-    world.turnRight();
-    world.turnRight();
-  }
-}
+    try {
+        "(" <TURN> dir=<DIRECTION> ")"
+        { 
+            if (dir.image.equals(":left")) {
+                world.turnRight();
+                world.turnRight();
+                world.turnRight();
+            } else if (dir.image.equals(":right")) {
+                world.turnRight();
+            } else if (dir.image.equals(":around")) {
+                world.turnRight();
+                world.turnRight();
+            }
+        }
+    } catch (Exception e) {
+        throw new Error("Error executing TURN command: " + e.getMessage());
+    }
 }
 
 void face(): 
@@ -429,24 +498,30 @@ void face():
     Token direction;
 }
 {
-    "(" <FACE> direction=<ORIENTATION>")"
-    {
-        switch (direction.image) {
-            case ":north":
-                faceDirection(RobotWorld.NORTH);
-                break;
-            case ":south":
-                faceDirection(RobotWorld.SOUTH);
-                break;
-            case ":east":
-                faceDirection(RobotWorld.EAST);
-                break;
-            case ":west":
-                faceDirection(RobotWorld.WEST);
-                break;
+    try {
+        "(" <FACE> direction=<ORIENTATION>")"
+        {
+            switch (direction.image) {
+                case ":north":
+                    faceDirection(RobotWorld.NORTH);
+                    break;
+                case ":south":
+                    faceDirection(RobotWorld.SOUTH);
+                    break;
+                case ":east":
+                    faceDirection(RobotWorld.EAST);
+                    break;
+                case ":west":
+                    faceDirection(RobotWorld.WEST);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid direction: " + direction.image);
+            }
         }
+    } catch (Exception e) {
+        throw new Error("Error executing FACE command: " + e.getMessage());
     }
-}   
+}
 
 
 void faceDirection(int targetDirection): 
@@ -475,34 +550,35 @@ void moveDir():
     int originalFacing;
 }
 {
-    "(" <MOVEDIR> n=num() dir=<DIRECTION> ")"{
-        originalFacing = world.getFacing(); 
-        switch (dir.image) {
-            case ":front":
-       
-                break;
-            case ":right":
-            
-                world.turnRight();
-                world.moveForward(n, false);
-                restoreOriginalFacing(originalFacing);
-                break;
-            case ":left":
-           
-                world.turnRight();
-                world.turnRight();
-                world.turnRight();
-                world.moveForward(n, false);
-                restoreOriginalFacing(originalFacing);
-                break;
-            case ":back":
-               
-                world.turnRight();
-                world.turnRight();
-                world.moveForward(n, false);
-                restoreOriginalFacing(originalFacing);
-                break;
+    try {
+        "(" <MOVEDIR> n=num() dir=<DIRECTION> ")" {
+            originalFacing = world.getFacing(); 
+            switch (dir.image) {
+                case ":front":
+                    world.moveForward(n, false);
+                    break;
+                case ":right":
+                    world.turnRight();
+                    world.moveForward(n, false);
+                    restoreOriginalFacing(originalFacing);
+                    break;
+                case ":left":
+                    world.turnRight();
+                    world.turnRight();
+                    world.turnRight();
+                    world.moveForward(n, false);
+                    restoreOriginalFacing(originalFacing);
+                    break;
+                case ":back":
+                    world.turnRight();
+                    world.turnRight();
+                    world.moveForward(n, false);
+                    restoreOriginalFacing(originalFacing);
+                    break;
+            }
         }
+    } catch (Exception e) {
+        throw new Error("Error executing moveDir: " + e.getMessage());
     }
 }
 
@@ -549,38 +625,36 @@ void runDirs() :
     int originalFacing;
 }
 {
-   "(" <RUNDIRS> (dir=<DIRECTION> { directions.add(dir); } ( dir=<DIRECTION> { directions.add(dir); } )*) ")"
-    {
-        originalFacing = world.getFacing(); 
-        
-        
-        for (Token direction : directions) {
-            switch (direction.image) {
-                case ":front":
-                    world.moveForward(1, false); 
-                    break;
-                case ":right":
-                    world.turnRight();
-                    world.moveForward(1, false); 
-                    world.turnRight(); world.turnRight(); world.turnRight(); 
-                    break;
-                case ":left":
-                    world.turnRight(); world.turnRight(); world.turnRight(); 
-                    world.moveForward(1, false); 
-                    world.turnRight(); 
-                    break;
-                case ":back":
-                    world.turnRight(); world.turnRight(); 
-                    world.moveForward(1, false); 
-                    world.turnRight(); world.turnRight(); 
-                    break;
+    try {
+        "(" <RUNDIRS> (dir=<DIRECTION> { directions.add(dir); } ( dir=<DIRECTION> { directions.add(dir); } )*) ")"
+        {
+            originalFacing = world.getFacing(); 
+            
+            for (Token direction : directions) {
+                switch (direction.image) {
+                    case ":front":
+                        world.moveForward(1, false); 
+                        break;
+                    case ":right":
+                        world.turnRight();
+                        world.moveForward(1, false); 
+                        restoreOriginalFacing(originalFacing); 
+                        break;
+                    case ":left":
+                        world.turnRight(); world.turnRight(); world.turnRight(); 
+                        world.moveForward(1, false); 
+                        restoreOriginalFacing(originalFacing); 
+                        break;
+                    case ":back":
+                        world.turnRight(); world.turnRight(); 
+                        world.moveForward(1, false); 
+                        restoreOriginalFacing(originalFacing); 
+                        break;
+                }
             }
         }
-        
-        
-        while (world.getFacing() != originalFacing) {
-            world.turnRight();
-        }
+    } catch (Exception e) {
+        throw new Error("Error executing runDirs: " + e.getMessage());
     }
 }
 
